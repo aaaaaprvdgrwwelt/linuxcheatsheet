@@ -16,5 +16,12 @@
        rm -r "${DIR}"
     done
 
+## Convert HEIC to JPG
+
+    for bild in $(ls *.heic); do 
+    	echo $bild
+    	./tifig -i $bild -v -q 100 ${bild/%.heic/.jpg}
+    	rm $bild
+    done;
 
 Made with https://stackedit.io/app
