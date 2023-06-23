@@ -3,6 +3,17 @@
 ## Find the biggest subdirectories
     du -hs * | sort -rh | head -5
 
+
+## Delete specific files inside ZIP files
+    SUCHE="file_to_delete"
+    for DATEI in ./*.zip; do
+        LOESCHE=$(unzip -l "${DATEI}" | grep "${SUCHE}" | awk '{print $NF}')
+        ZIP=$(echo zip -d "\"${DATEI}\"" "\"${LOESCHE}\"")
+        echo ${ZIP}
+        eval "${ZIP}"
+    done
+
+
 ## Convert PDF to CBZ
     for DATEI in *.pdf; do
        DIR=$(mktemp -d)
