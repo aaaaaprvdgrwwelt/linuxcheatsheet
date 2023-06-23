@@ -1,4 +1,4 @@
-# Some helpful Linux tips
+# Some helpful Linux shell tips
 
 ## Find the biggest subdirectories
     du -hs * | sort -rh | head -5
