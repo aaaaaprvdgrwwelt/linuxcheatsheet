@@ -5,13 +5,25 @@
 
 
 ## Delete specific files inside ZIP files
-    SUCHE="file_to_delete"
-    for DATEI in ./*.zip; do
-        LOESCHE=$(unzip -l "${DATEI}" | grep "${SUCHE}" | awk '{print $NF}')
-        ZIP=$(echo zip -d "\"${DATEI}\"" "\"${LOESCHE}\"")
-        echo ${ZIP}
-        eval "${ZIP}"
+Searches for ZIP files in the current directory and all subdirectories and then deletes all files from the archives found with the pattern "\*files-to-delete\*".
+
+    SUCHE="files-to-delete"
+    shopt -s globstar
+    for DATEI in **/*.zip; do
+    	LOESCHE=$(unzip -Z1 "${DATEI}" 2>/dev/null || echo "ERR")
+    	if [[ "${LOESCHE}" == "ERR" ]]; then
+		    echo "===> Kann Datei ${DATEI} nicht lesen!"
+	    else
+    		LOESCHE="$(echo "${LOESCHE}" | grep "${SUCHE}")"
+    		if [[ -n "${LOESCHE}" ]]; then
+    			ZIP=$(echo zip -d "\"${DATEI}\"" "\"${LOESCHE}\"")
+    			echo "${ZIP}"
+    			eval "${ZIP}"
+    		fi
+    	fi
+    	unset LOESCHE
     done
+
 
 
 ## Convert PDF to CBZ
