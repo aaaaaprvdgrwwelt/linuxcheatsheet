@@ -63,3 +63,29 @@ Searches for ZIP files in the current directory and all subdirectories and then 
     	./tifig -i $bild -v -q 100 ${bild/%.heic/.jpg}
     	rm $bild
     done;
+
+## Convert CBZ archives to webp
+Looks for all .cbz files in a directory and converts those with JPEG or PNG files to WEBP. Uses https://github.com/gen2brain/cbconvert for conversion
+
+    VERZEICHNIS="."
+    OLD_IFS="${IFS}"
+    IFS=$'\n'
+
+    DATEIEN=($(find "${VERZEICHNIS}" -type f -name "*.cbz" | sort))
+    TOTAL=${#DATEIEN[@]}
+
+    for ((i = 0; i < TOTAL; i++)); do
+        DATEI="${DATEIEN[$i]}"
+        printf "\nVerarbeite Datei %s (%d von %d)\n" "${DATEI}" "$((i+1))" "${TOTAL}"
+        
+        if unzip -l "${DATEI}" | grep -qE '\.(jpg|jpeg|png)$'; then
+            ls -lh "${DATEI}"
+            VERZEICHNIS="$(dirname "${DATEI}")"
+            ~/Dokumente/Comics/cbconvert-1.0.0/cbconvert convert --format webp --quality 92 --outdir "${VERZEICHNIS}" "${DATEI}"
+            ls -lh "${DATEI}"
+        else
+            printf "Keine konvertierbaren Dateien im Archiv gefunden\n"
+        fi
+    done
+
+    IFS="${OLD_IFS}"
